@@ -67,17 +67,20 @@ body {
     padding: 0 10px;
 }
 
-.bubble-count {
+.game-info {
     position: absolute;
     top: 80px;
     right: 20px;
     z-index: 2;
     background: rgba(255, 255, 255, 0.7);
-    padding: 10px 15px;
+    padding: 15px;
     border-radius: 20px;
     font-size: 1.5rem;
     color: #118AB2;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .shake-info {
@@ -98,10 +101,80 @@ body {
     50% { opacity: 1; }
 }
 
+.controls {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn {
+    background: #4ECDC4;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 1.5rem;
+    font-family: 'Comic Sans MS', cursive;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a8c85;
+    transition: all 0.1s;
+    text-align: center;
+}
+
+.btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #2a8c85;
+}
+
+.level-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px 50px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    animation: popIn 0.5s;
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.level-up h2 {
+    color: #FF6B6B;
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.level-up p {
+    color: #118AB2;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.level-up .btn {
+    background: #FFD166;
+    color: #333;
+    box-shadow: 0 4px 0 #e6b952;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     .title { font-size: 2rem; }
     .instructions { font-size: 1.5rem; }
-    .bubble-count { font-size: 1.2rem; }
+    .game-info { font-size: 1.2rem; padding: 10px; }
     .shake-info { font-size: 1.2rem; }
+    .btn { font-size: 1.2rem; padding: 10px 15px; }
+    .level-up { padding: 20px 30px; }
+    .level-up h2 { font-size: 2rem; }
+    .level-up p { font-size: 1.5rem; }
 }

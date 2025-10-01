@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const bubbleCountElement = document.getElementById('count');
+    const levelElement = document.getElementById('level');
+    const speedElement = document.getElementById('speed');
+    const restartBtn = document.getElementById('restartBtn');
+    const levelUpScreen = document.getElementById('levelUpScreen');
+    const newLevelElement = document.getElementById('newLevel');
+    const continueBtn = document.getElementById('continueBtn');
 
     // Set canvas to full container size
     function resizeCanvas() {
@@ -15,8 +21,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Game variables
     let bubbles = [];
     let poppedCount = 0;
+    let level = 1;
     let lastTime = 0;
     let animationId;
+    let gameActive = true;
+
+    // Game settings by level
+    const levelSettings = {
+        1: { speedMultiplier: 1, bubbleCount: 10, name: "Normal" },
+        2: { speedMultiplier: 1.3, bubbleCount: 12, name: "Fast" },
+        3: { speedMultiplier: 1.6, bubbleCount: 15, name: "Faster" },
+        4: { speedMultiplier: 2, bubbleCount: 18, name: "Super Fast" },
+        5: { speedMultiplier: 2.5, bubbleCount: 20, name: "Ultra Fast" }
+    };
 
     // Bubble class
     class Bubble {
@@ -24,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
             this.x = x || Math.random() * canvas.width;
             this.y = y || canvas.height + 50;
             this.radius = 20 + Math.random() * 30;
-            this.speed = 1 + Math.random() * 2;
+            this.baseSpeed = 1 + Math.random() * 2;
+            this.speed = this.baseSpeed * levelSettings[level].speedMultiplier;
             this.color = this.getRandomColor();
             this.opacity = 0.7 + Math.random() * 0.3;
             this.popping = false;
@@ -51,11 +69,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         poppedCount++;
                         bubbleCountElement.textContent = poppedCount;
 
-                        // Add a new bubble to replace the popped one
-                        addBubble();
+                        // Check if we've reached the level goal
+                        if (poppedCount >= 50) {
+                            levelUp();
+                        } else {
+                            // Add a new bubble to replace the popped one
+                            addBubble();
+                        }
                     }
                 }
             } else {
+                this.speed = this.baseSpeed * levelSettings[level].speedMultiplier;
                 this.y -= this.speed;
 
                 // If bubble goes off screen, reset it
@@ -162,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         pop() {
-            if (!this.popping) {
+            if (!this.popping && gameActive) {
                 this.popping = true;
                 playPopSound();
             }
@@ -170,14 +194,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Create initial bubbles
-    function createBubbles(count) {
-        for (let i = 0; i < count; i++) {
+    function createBubbles() {
+        bubbles = [];
+        for (let i = 0; i < levelSettings[level].bubbleCount; i++) {
             addBubble();
         }
     }
 
     function addBubble() {
         bubbles.push(new Bubble());
+    }
+
+    // Level up function
+    function levelUp() {
+        gameActive = false;
+        level++;
+        newLevelElement.textContent = level;
+        levelUpScreen.style.display = 'block';
+
+        // Update UI
+        levelElement.textContent = level;
+        speedElement.textContent = levelSettings[level].name;
+    }
+
+    // Continue to next level
+    function continueGame() {
+        poppedCount = 0;
+        bubbleCountElement.textContent = poppedCount;
+        createBubbles();
+        gameActive = true;
+        levelUpScreen.style.display = 'none';
+    }
+
+    // Restart game
+    function restartGame() {
+        poppedCount = 0;
+        level = 1;
+        bubbleCountElement.textContent = poppedCount;
+        levelElement.textContent = level;
+        speedElement.textContent = levelSettings[level].name;
+        createBubbles();
+        gameActive = true;
+        levelUpScreen.style.display = 'none';
     }
 
     // Pop sound effect
@@ -260,6 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let lastX = null, lastY = null, lastZ = null;
 
     function handleDeviceMotion(event) {
+        if (!gameActive) return;
+
         const acceleration = event.accelerationIncludingGravity;
         const currentTime = Date.now();
 
@@ -284,13 +344,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize game
     function init() {
-        createBubbles(10);
+        createBubbles();
         lastTime = performance.now();
         gameLoop(lastTime);
 
         // Event listeners
         canvas.addEventListener('mousedown', handleTap);
         canvas.addEventListener('touchstart', handleTap);
+        restartBtn.addEventListener('click', restartGame);
+        continueBtn.addEventListener('click', continueGame);
 
         // Device motion for shake detection
         if (window.DeviceMotionEvent) {
