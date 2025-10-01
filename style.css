@@ -36,22 +36,63 @@ body {
     z-index: 1;
 }
 
-.title {
+.title-container {
     position: absolute;
     top: 20px;
     left: 0;
     width: 100%;
-    text-align: center;
+    display: flex;
+    justify-content: center;
     z-index: 2;
-    color: #FF6B6B;
-    font-size: 2.5rem;
-    text-shadow: 3px 3px 0 #FFD166;
-    animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.title-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: url("./assets/aarha.jpg");
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    position: relative;
+    animation: rotate 10s linear infinite, pulse 2s ease-in-out infinite alternate;
+    overflow: hidden;
+}
+
+.title-circle::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFD166, #118AB2);
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(20px);
+    opacity: 0.7;
+}
+
+.title {
+    color: white;
+    font-size: 2.2rem;
+    text-align: center;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+    padding: 0 10px;
+    z-index: 1;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
 }
 
 .instructions {
@@ -93,10 +134,10 @@ body {
     color: #FF6B6B;
     font-size: 1.5rem;
     text-shadow: 1px 1px 0 white;
-    animation: pulse 2s infinite;
+    animation: pulse-text 2s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-text {
     0%, 100% { opacity: 0.7; }
     50% { opacity: 1; }
 }
@@ -169,7 +210,15 @@ body {
 
 /* Responsive design */
 @media (max-width: 600px) {
-    .title { font-size: 2rem; }
+    .title-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
+
     .instructions { font-size: 1.5rem; }
     .game-info { font-size: 1.2rem; padding: 10px; }
     .shake-info { font-size: 1.2rem; }
